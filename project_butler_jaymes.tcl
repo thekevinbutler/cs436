@@ -192,63 +192,113 @@ proc attach-tcp-cbr-traffic { node sink size} {
 }
 
 #########using the above procedure for CBR setups
+
 #set up lossmonitors (the endpoint)
+#for n9
 set sink9to12 [new Agent/LossMonitor]
 set sink9to14 [new Agent/LossMonitor]
 set sink9to15 [new Agent/LossMonitor]
 set sink9to20 [new Agent/LossMonitor]
 set sink9to23 [new Agent/LossMonitor]
 set sink9to27 [new Agent/LossMonitor]
+#for n13
+set sink13to8 [new Agent/LossMonitor]
+set sink13to11 [new Agent/LossMonitor]
+set sink13to17 [new Agent/LossMonitor]
+set sink13to19 [new Agent/LossMonitor]
+set sink13to21 [new Agent/LossMonitor]
+set sink13to24 [new Agent/LossMonitor]
+set sink13to25 [new Agent/LossMonitor]
+set sink13to26 [new Agent/LossMonitor]
+#for 10 and 16
+set sink10to18 [new Agent/LossMonitor]
+set sink16to18 [new Agent/LossMonitor]
 
 #attach sink to endpoint node
+#forn9
 $ns attach-agent $n12 $sink9to12
 $ns attach-agent $n14 $sink9to14
 $ns attach-agent $n15 $sink9to15
 $ns attach-agent $n20 $sink9to20
 $ns attach-agent $n23 $sink9to23
 $ns attach-agent $n27 $sink9to27
+#for n13
+$ns attach-agent $n8 $sink13to8
+$ns attach-agent $n11 $sink13to11
+$ns attach-agent $n17 $sink13to17
+$ns attach-agent $n19 $sink13to19
+$ns attach-agent $n21 $sink13to21
+$ns attach-agent $n24 $sink13to24
+$ns attach-agent $n25 $sink13to25
+$ns attach-agent $n26 $sink13to26
+#for 10 and 16
+$ns attach-agent $n18 $sink10to18
+$ns attach-agent $n18 $sink16to18
 
 #create the traffic sources at start
+#for n9
 set source9to12 [attach-cbr-traffic $n9 $sink9to12 1500]
 set source9to14 [attach-cbr-traffic $n9 $sink9to14 1500]
 set source9to15 [attach-cbr-traffic $n9 $sink9to15 1500]
 set source9to20 [attach-cbr-traffic $n9 $sink9to20 1500]
 set source9to23 [attach-cbr-traffic $n9 $sink9to23 1500]
 set source9to27 [attach-cbr-traffic $n9 $sink9to27 1500]
+#for n13
+set source13to8 [attach-exp-traffic $n13 $sink13to8 ]
+set source13to11 [attach-exp-traffic $n13 $sink13to11 ]
+set source13to17 [attach-exp-traffic $n13 $sink13to17 ]
+set source13to19 [attach-exp-traffic $n13 $sink13to19 ]
+set source13to21 [attach-exp-traffic $n13 $sink13to21 ]
+set source13to24 [attach-exp-traffic $n13 $sink13to24 ]
+set source13to25 [attach-exp-traffic $n13 $sink13to25 ]
+set source13to26 [attach-exp-traffic $n13 $sink13to26 ]
+#for 10 and 16
+set source10to18 [attach-tcp-cbr-traffic $n10 $sink10to18 1000]
+set source16to18 [attach-tcp-cbr-traffic $n16 $sink16to18 1000]
 
 #set the start and stop of traffic
+#for n9
 $ns at 1.0 "$source9to12 start"
 $ns at 1.0 "$source9to14 start"
 $ns at 1.0 "$source9to15 start"
 $ns at 1.0 "$source9to20 start"
 $ns at 1.0 "$source9to23 start"
 $ns at 1.0 "$source9to27 start"
+#for n13
+$ns at 2.0 "$source13to8 start"
+$ns at 2.0 "$source13to11 start"
+$ns at 2.0 "$source13to17 start"
+$ns at 2.0 "$source13to19 start"
+$ns at 2.0 "$source13to21 start"
+$ns at 2.0 "$source13to24 start"
+$ns at 2.0 "$source13to25 start"
+$ns at 2.0 "$source13to26 start"
+#for 10 and 16
+$ns at 3.0 "$source10to18 start"
+$ns at 4.0 "$source16to18 start"
 
 ######stop
+#for n9
 $ns at 10.0 "$source9to12 stop"
 $ns at 10.0 "$source9to14 stop"
 $ns at 10.0 "$source9to15 stop"
 $ns at 10.0 "$source9to20 stop"
 $ns at 10.0 "$source9to23 stop"
 $ns at 10.0 "$source9to27 stop"
+#for n13
+$ns at 10.0 "$source13to8 stop"
+$ns at 10.0 "$source13to11 stop"
+$ns at 10.0 "$source13to17 stop"
+$ns at 10.0 "$source13to19 stop"
+$ns at 10.0 "$source13to21 stop"
+$ns at 10.0 "$source13to24 stop"
+$ns at 10.0 "$source13to25 stop"
+$ns at 10.0 "$source13to26 stop"
+$ns at 10.0 "$source10to18 stop"
+$ns at 10.0 "$source16to18 stop"
+
 
 #####-----------------NETWORK------------####
 
-##setup the traffic for n9-n27
-#set udp9to27 [new Agent/UDP]
-#$ns attach-agent $n9 $udp9to27
-#set cbr9to27 [new Application/Traffic/CBR]
-#$cbr9to27 set packetSize_ 1500
-#$cbr9to27 set interval_ 0.005
-#$cbr9to27 set random_ 1
-#$cbr9to27 attach-agent $udp9to27
-
-#set null9to27 [new Agent/Null]
-#$ns attach-agent $n27 $null9to27
-
-#$ns connect $udp9to27 $null9to27
-
-#$ns at 1 "$cbr9to27 start"
-#$ns at 10 "$cbr9to27 stop"
 
 $ns run
