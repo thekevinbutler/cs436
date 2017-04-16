@@ -146,6 +146,50 @@ proc attach-cbr-traffic { node sink size} {
 	$ns connect $source $sink
 	return $traffic
 }
+#for exp traffic
+proc attach-exp-traffic { node sink } {
+	#Get an instance of the simulator
+	set ns [Simulator instance]
+
+	#Create a UDP agent and attach it to the node
+	set source [new Agent/UDP]
+	$ns attach-agent $node $source
+
+	#Create an Expoo traffic agent and set its configuration parameters
+	set traffic [new Application/Traffic/Exponential]
+	$traffic set packetSize_ 2000
+	$traffic set burst_time_ 0.5
+	$traffic set idle_time_ 0.5
+	$traffic set rate_ 2000
+        
+        # Attach traffic source to the traffic generator
+        $traffic attach-agent $source
+	#Connect the source and the sink
+	$ns connect $source $sink
+	return $traffic
+}
+
+#this is for tcp traffic
+proc attach-tcp-cbr-traffic { node sink size} {
+	#Get an instance of the simulator
+	set ns [Simulator instance]
+
+	#Create a TCP agent and attach it to the node
+	set source [new Agent/TCP]
+	$ns attach-agent $node $source
+
+	#Create an CBR traffic agent and set its configuration parameters
+	set traffic [new Application/Traffic/CBR]
+	$traffic set packetSize_ $size
+	$traffic set interval_ 0.005
+	$traffic set random_ 1
+    
+    # Attach traffic source to the traffic generator
+    $traffic attach-agent $source
+	#Connect the source and the sink
+	$ns connect $source $sink
+	return $traffic
+}
 
 #########using the above procedure for CBR setups
 #set up lossmonitors (the endpoint)
