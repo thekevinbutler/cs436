@@ -1,8 +1,8 @@
 #create a simulator object
 set ns [new Simulator]
-
+$ns rtproto DV
 set tracefd [open project_butler_jaymes.tr w]
-$ns trace-all $tracefd
+#$ns trace-all $tracefd
 
 #create six nodes
 set n0 [$ns node]
@@ -158,9 +158,9 @@ proc attach-exp-traffic { node sink } {
 	#Create an Expoo traffic agent and set its configuration parameters
 	set traffic [new Application/Traffic/Exponential]
 	$traffic set packetSize_ 2000
-	$traffic set burst_time_ 0.5
-	$traffic set idle_time_ 0.5
-	$traffic set rate_ 2000
+	$traffic set burst_time_ 0.5s
+	$traffic set idle_time_ 0.5s
+	$traffic set rate_ 2000k
         
         # Attach traffic source to the traffic generator
         $traffic attach-agent $source
@@ -170,12 +170,13 @@ proc attach-exp-traffic { node sink } {
 }
 
 #this is for tcp traffic
-proc attach-tcp-cbr-traffic { node sink size} {
+proc attach-tcp-cbr-traffic { node sink size fid} {
 	#Get an instance of the simulator
 	set ns [Simulator instance]
 
 	#Create a TCP agent and attach it to the node
 	set source [new Agent/TCP]
+	$source set class_ 2
 	$ns attach-agent $node $source
 
 	#Create an CBR traffic agent and set its configuration parameters
@@ -183,7 +184,8 @@ proc attach-tcp-cbr-traffic { node sink size} {
 	$traffic set packetSize_ $size
 	$traffic set interval_ 0.005
 	$traffic set random_ 1
-    
+    $source set fid_ $fid
+
     # Attach traffic source to the traffic generator
     $traffic attach-agent $source
 	#Connect the source and the sink
@@ -253,8 +255,8 @@ set source13to24 [attach-exp-traffic $n13 $sink13to24 ]
 set source13to25 [attach-exp-traffic $n13 $sink13to25 ]
 set source13to26 [attach-exp-traffic $n13 $sink13to26 ]
 #for 10 and 16
-set source10to18 [attach-tcp-cbr-traffic $n10 $sink10to18 1000]
-set source16to18 [attach-tcp-cbr-traffic $n16 $sink16to18 1000]
+set source10to18 [attach-tcp-cbr-traffic $n10 $sink10to18 1000 1]
+set source16to18 [attach-tcp-cbr-traffic $n16 $sink16to18 1000 2]
 
 #set the start and stop of traffic
 #for n9
@@ -276,6 +278,10 @@ $ns at 2.0 "$source13to26 start"
 #for 10 and 16
 $ns at 3.0 "$source10to18 start"
 $ns at 4.0 "$source16to18 start"
+
+#down and up
+$ns rtmodel-at 6.0 down $n1 $n3
+$ns rtmodel-at 7.0 up $n1 $n3
 
 ######stop
 #for n9
