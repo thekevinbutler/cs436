@@ -2,8 +2,8 @@
 set ns [new Simulator]
 $ns rtproto DV
 set tracefd [open project_butler_jaymes.tr w]
-#$ns trace-all $tracefd
 
+$ns trace-all $tracefd
 #create six nodes
 set n0 [$ns node]
 set n1 [$ns node]
@@ -33,6 +33,8 @@ set n24 [$ns node]
 set n25 [$ns node]
 set n26 [$ns node]
 set n27 [$ns node]
+
+
 
 #Create links between the n1 and endpoints
 $ns duplex-link $n1 $n12 1Mb 20ms DropTail
@@ -120,6 +122,9 @@ $ns queue-limit $n2 $n3 20
 
 #####Traffic setup
 
+#$ns trace-queue $n1 $n3 $tracefd
+
+
 #Define a procedure that attaches a UDP agent to a previously created node
 #'node' and attaches an CBR traffic generator to the agent with the
 #characteristic values 'size' for packet size 'burst' for burst time,
@@ -157,10 +162,10 @@ proc attach-exp-traffic { node sink } {
 
 	#Create an Expoo traffic agent and set its configuration parameters
 	set traffic [new Application/Traffic/Exponential]
-	$traffic set packetSize_ 2000
+	$traffic set packetSize_ 200
 	$traffic set burst_time_ 0.5s
 	$traffic set idle_time_ 0.5s
-	$traffic set rate_ 2000k
+	$traffic set rate_ 100k
         
         # Attach traffic source to the traffic generator
         $traffic attach-agent $source
@@ -204,17 +209,10 @@ set sink9to20 [new Agent/LossMonitor]
 set sink9to23 [new Agent/LossMonitor]
 set sink9to27 [new Agent/LossMonitor]
 #for n13
-set sink13to8 [new Agent/LossMonitor]
-set sink13to11 [new Agent/LossMonitor]
-set sink13to17 [new Agent/LossMonitor]
-set sink13to19 [new Agent/LossMonitor]
 set sink13to21 [new Agent/LossMonitor]
-set sink13to24 [new Agent/LossMonitor]
-set sink13to25 [new Agent/LossMonitor]
-set sink13to26 [new Agent/LossMonitor]
 #for 10 and 16
-set sink10to18 [new Agent/LossMonitor]
-set sink16to18 [new Agent/LossMonitor]
+set sink10to18 [new Agent/TCPSink]
+set sink16to18 [new Agent/TCPSink]
 
 #attach sink to endpoint node
 #forn9
@@ -225,14 +223,7 @@ $ns attach-agent $n20 $sink9to20
 $ns attach-agent $n23 $sink9to23
 $ns attach-agent $n27 $sink9to27
 #for n13
-$ns attach-agent $n8 $sink13to8
-$ns attach-agent $n11 $sink13to11
-$ns attach-agent $n17 $sink13to17
-$ns attach-agent $n19 $sink13to19
 $ns attach-agent $n21 $sink13to21
-$ns attach-agent $n24 $sink13to24
-$ns attach-agent $n25 $sink13to25
-$ns attach-agent $n26 $sink13to26
 #for 10 and 16
 $ns attach-agent $n18 $sink10to18
 $ns attach-agent $n18 $sink16to18
@@ -246,14 +237,7 @@ set source9to20 [attach-cbr-traffic $n9 $sink9to20 1500]
 set source9to23 [attach-cbr-traffic $n9 $sink9to23 1500]
 set source9to27 [attach-cbr-traffic $n9 $sink9to27 1500]
 #for n13
-set source13to8 [attach-exp-traffic $n13 $sink13to8 ]
-set source13to11 [attach-exp-traffic $n13 $sink13to11 ]
-set source13to17 [attach-exp-traffic $n13 $sink13to17 ]
-set source13to19 [attach-exp-traffic $n13 $sink13to19 ]
 set source13to21 [attach-exp-traffic $n13 $sink13to21 ]
-set source13to24 [attach-exp-traffic $n13 $sink13to24 ]
-set source13to25 [attach-exp-traffic $n13 $sink13to25 ]
-set source13to26 [attach-exp-traffic $n13 $sink13to26 ]
 #for 10 and 16
 set source10to18 [attach-tcp-cbr-traffic $n10 $sink10to18 1000 1]
 set source16to18 [attach-tcp-cbr-traffic $n16 $sink16to18 1000 2]
@@ -267,14 +251,7 @@ $ns at 1.0 "$source9to20 start"
 $ns at 1.0 "$source9to23 start"
 $ns at 1.0 "$source9to27 start"
 #for n13
-$ns at 2.0 "$source13to8 start"
-$ns at 2.0 "$source13to11 start"
-$ns at 2.0 "$source13to17 start"
-$ns at 2.0 "$source13to19 start"
 $ns at 2.0 "$source13to21 start"
-$ns at 2.0 "$source13to24 start"
-$ns at 2.0 "$source13to25 start"
-$ns at 2.0 "$source13to26 start"
 #for 10 and 16
 $ns at 3.0 "$source10to18 start"
 $ns at 4.0 "$source16to18 start"
@@ -283,6 +260,11 @@ $ns at 4.0 "$source16to18 start"
 $ns rtmodel-at 6.0 down $n1 $n3
 $ns rtmodel-at 7.0 up $n1 $n3
 
+proc endsim {} {
+global tracefd
+	close $tracefd
+	exit 0
+}
 ######stop
 #for n9
 $ns at 10.0 "$source9to12 stop"
@@ -292,19 +274,11 @@ $ns at 10.0 "$source9to20 stop"
 $ns at 10.0 "$source9to23 stop"
 $ns at 10.0 "$source9to27 stop"
 #for n13
-$ns at 10.0 "$source13to8 stop"
-$ns at 10.0 "$source13to11 stop"
-$ns at 10.0 "$source13to17 stop"
-$ns at 10.0 "$source13to19 stop"
 $ns at 10.0 "$source13to21 stop"
-$ns at 10.0 "$source13to24 stop"
-$ns at 10.0 "$source13to25 stop"
-$ns at 10.0 "$source13to26 stop"
 $ns at 10.0 "$source10to18 stop"
 $ns at 10.0 "$source16to18 stop"
-
+$ns at 10.0 "endsim"
 
 #####-----------------NETWORK------------####
-
 
 $ns run

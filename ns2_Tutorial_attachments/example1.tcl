@@ -38,3 +38,4 @@ $ns at 4.5 "$cbr0 stop"
 
 #Run the simulation
 $ns run
+exit 0
