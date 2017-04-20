@@ -11,12 +11,12 @@ BEGIN {
    time2 = $2;
 
    if (time2 - time1 > timeInterval) {
-      printf("%f\t%d\t%d\n", time2, numPackets , totPackets) > "27received.xls";
+      printf("%f\t%d\t%d\n", time2, numPackets , totPackets) > "13sent.xls";
 	 time1 = $2;
 	 numPackets = 0;
    }
 
-   if ($1 == "r" && $4 == 27 && int($9) == 9) {
+   if ($1 == "r" && $4 == 0 && $3 == 13 &&  int($10) == 21) {
       numPackets++;
 	  totPackets++;
    }
@@ -25,7 +25,7 @@ BEGIN {
 
 END {
    print("********");
-   printf("done with finding packets received at 27\n");
+   printf("done with finding packets sent from 13\n");
    print("********");
 }
 

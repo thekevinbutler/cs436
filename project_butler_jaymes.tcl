@@ -122,9 +122,6 @@ $ns queue-limit $n2 $n3 20
 
 #####Traffic setup
 
-#$ns trace-queue $n1 $n3 $tracefd
-
-
 #Define a procedure that attaches a UDP agent to a previously created node
 #'node' and attaches an CBR traffic generator to the agent with the
 #characteristic values 'size' for packet size 'burst' for burst time,

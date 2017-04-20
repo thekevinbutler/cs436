@@ -16,7 +16,7 @@ BEGIN {
 	 numPackets = 0;
    }
 
-   if ($1 == "r" && $4 == 1 && $3 == 9 &&  (int)$10 == 27) {
+   if ($1 == "r" && $4 == 1 && $3 == 9 &&  int($10) == 27) {
       numPackets++;
 	  totPackets++;
    }
@@ -25,7 +25,7 @@ BEGIN {
 
 END {
    print("********");
-   printf("done with finding packets sent from 10\n");
+   printf("done with finding total packets sent from n9\n");
    print("********");
 }
 

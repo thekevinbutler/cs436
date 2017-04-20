@@ -43,7 +43,7 @@ if ( start_time[packet_id] == 0 )
 
 #Record the receiving time for CBR (flow_id=2)
 
-if (int($10) == 27 && $5 == "cbr" && action != "d" ) 
+if (int($10) == 21 && $5 == "exp" && action != "d" ) 
 {
 	if ( action == "r" ) 
 	{
@@ -84,7 +84,7 @@ for ( packet_id = 0; packet_id <= highest_packet_id; packet_id++ )
 		jitter = delay_diff/seqno_diff;
 	}
 
-	printf("%f \t %f\n", start, jitter) > "9jitter.xls";
+	printf("%f \t %f\n", start, jitter) > "13jitter.xls";
 	last_seqno = pkt_seqno[packet_id];
 	last_delay = packet_duration;
 	}

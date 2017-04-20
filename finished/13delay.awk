@@ -30,7 +30,7 @@ if ( start_time[packet_id] == 0 )
 	start_time[packet_id] = time;
 
 
-if ( int($10) == 27 && action != "d" ) 
+if ( int($10) == 21 && $5 == "exp" && action != "d" ) 
 {
 	if ( action == "r" ) 
 	{
@@ -56,7 +56,7 @@ end = end_time[packet_id];
 packet_duration = end - start;
 
 
-if ( start < end ) printf("%f \t %f\n", start, packet_duration) > "example3delay.xls";
+if ( start < end ) printf("%f \t %f\n", start, packet_duration) > "13delay.xls";
 
 }
 
